@@ -10,19 +10,30 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>dfdf</h1>
+
 	<%
 		ArrayList<String> str = user.getUserList();
 		
 	%>
+	<table>
+	<tr>
+	
 	<%
 		for(String ob : str){
-			System.out.print(ob + "");
+	%>
+	<td>
+	<%=ob %>
+	</td>
+	
+	<%
 		}
 	%>
-	<h1>
-		
-	</h1>
+	</tr>
+	</table>
 	<br>
+	<hr>
+	<a href="index.jsp">
+	<input type="button" value="다시 index.jsp 로"/>
+	</a>
 </body>
 </html>

@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="javax.websocket.Session" %>
-<%@ page import = "java.util.*" %>
 
 
 <jsp:useBean id="user" class="chatting.broadsocket" scope="application"></jsp:useBean>
@@ -9,7 +8,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-
 <script>
 	function Morning(){
 		e = document.getElementById("messageTextArea");
@@ -17,29 +15,29 @@
 		e.style.background="blue";
 
 	}
-	
-	
-	
+	function refresh() 
+	{ 
+	    var iframe = document.getElementById('iframe'); 
+	    iframe.reload(true); 
+	} 
+
+	setTimeout('refresh()', 3000); 
 </script>
 </head>
 <body>
-<h1>
-
-</h1>
 	<!-- 메시지 표시 영역 -->
-	<textarea id="messageTextArea" readonly="readonly" rows="25" cols="45"></textarea>
+	<textarea id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
 	<br />
 	<!-- 송신 메시지 텍스트박스 -->
 	<input type="text" id="messageText" size="50" />
 	<!-- 송신 버튼 -->
 	<input type="button" value="Send" onclick="sendMessage()" />
-	<h1>
 	
-	</h1>
 	<input type="button" value="Change" onclick="Morning()"/>
 	<a href="userframe.jsp">
 	<input type="button" value="유저리스트 출력 확인"/>
 	</a>
+	
 	<script type="text/javascript">
 		//웹소켓 초기화
 		var webSocket = new WebSocket("ws://localhost:8080/WebSocketEx/broadsocket");
@@ -58,10 +56,18 @@
 			webSocket.send(messageText.value);
 			messageText.value = "";
 		}
-		
-		
 	</script>
-	
+	<br><hr>
+	<iframe width="600" height="300" src="userframe.jsp" name="FRAME"></iframe>
+	<script language="javascript"> 
+
+function doRefresh() { 
+parent.FRAME.location.href='userframe.jsp'; 
+setTimeout("doRefresh()",5000); //5초 
+} 
+doRefresh(); 
+
+</script> 
 	
 </body>
 </html>
