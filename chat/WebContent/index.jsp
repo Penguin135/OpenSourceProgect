@@ -11,18 +11,45 @@
 <script>
 	function Morning(){
 		e = document.getElementById("messageTextArea");
-		e.style.color="red";
-		e.style.background="blue";
+		e.style.color="black";
+		e.style.background="white";
 
 	}
-	function refresh() 
-	{ 
-	    var iframe = document.getElementById('iframe'); 
-	    iframe.reload(true); 
-	} 
-
-	setTimeout('refresh()', 3000); 
+	function Night(){
+		e = document.getElementById("messageTextArea");
+		e.style.color="red";
+		e.style.background="black";
+	}
+	
+	
+	
 </script>
+
+ <script language="JavaScript">
+      var set = 1;
+      var SetTime = 3;      // 최초 설정 시간(기본 : 초)
+      function msg_time() {   // 1초씩 카운트
+         m = Math.floor(SetTime / 60) + "분 " + (SetTime % 60) + "초";   // 남은 시간 계산
+         var msg = "현재 남은 시간은 <font color='red'>" + m + "</font> 입니다.";
+         document.all.ViewTimer.innerHTML = msg;      // div 영역에 보여줌 
+         SetTime--;               // 1초씩 감소
+         if (SetTime < 0) {         // 시간이 종료 되었으면..        
+            //clearInterval(tid);      // 타이머 해제
+         if (set == 1){          
+            SetTime = 3;
+            alert("밤이되었습니다.");
+            Night();
+            set = 0;
+            }
+         else {
+        	 SetTime = 3;
+        	 alert("낮이되었습니다.");
+        	 set = 1;
+        	 Morning();
+         }   
+         }}
+      window.onload = function TimerStart(){ tid=setInterval('msg_time()',1000) };
+   </script>	
 </head>
 <body>
 	<!-- 메시지 표시 영역 -->
