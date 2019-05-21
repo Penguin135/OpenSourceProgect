@@ -10,7 +10,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-
 	<%
 		ArrayList<String> str = user.getUserList();
 		
@@ -35,5 +34,7 @@
 	<a href="index.jsp">
 	<input type="button" value="다시 index.jsp 로"/>
 	</a>
+	
+	
 </body>
 </html>

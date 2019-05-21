@@ -9,6 +9,7 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonWriter;
+import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -20,6 +21,7 @@ public class broadsocket {
 	//유저 집합 리스트
 	static List<Session> sessionUsers = Collections.synchronizedList(new ArrayList<>());
 	static ArrayList<String> userList = new ArrayList<String>();
+	static int time=30;
 	/**
 	 * 웹 소켓이 접속되면 유저리스트에 세션을 넣는다.
 	 * 
@@ -36,9 +38,10 @@ public class broadsocket {
 	 * @param message     메시지
 	 * @param userSession
 	 * @throws IOException
+	 * @throws EncodeException 
 	 */
 	@OnMessage
-	public void handleMessage(String message, Session userSession) throws IOException {
+	public void handleMessage(String message, Session userSession) throws IOException, EncodeException {
 		String username = (String) userSession.getUserProperties().get("username");
 		//세션 프로퍼티에 username이 없으면 username을 선언하고 해당 세션을으로 메시지를 보낸다.(json 형식이다.)
 		//최초 메시지는 username설정
@@ -46,6 +49,14 @@ public class broadsocket {
 			userSession.getUserProperties().put("username", message);
 			userSession.getBasicRemote().sendText(buildJsonData("System", "you are now connected as " + message));
 			userList.add(message);
+			
+			if(userList.size()==2) {
+				Iterator<Session> iterator = sessionUsers.iterator();
+				while (iterator.hasNext()) {
+					iterator.next().getBasicRemote().sendText(buildJsonData("공지 : " , "게임이 시작되었습니다"));
+				}
+			}
+			
 			return;
 		}
 		//username이 있으면 전체에게 메시지를 보낸다.
@@ -53,6 +64,14 @@ public class broadsocket {
 		while (iterator.hasNext()) {
 			iterator.next().getBasicRemote().sendText(buildJsonData(username, message));
 		}
+	}
+
+	public static int getTime() {
+		return time;
+	}
+
+	public static void setTime(int time) {
+		broadsocket.time = time;
 	}
 
 	/**

@@ -2,59 +2,31 @@
 <%@ page import="javax.websocket.Session" %>
 <%@ page import = "java.util.*" %>
 
-
 <jsp:useBean id="user" class="chatting.broadsocket" scope="application"></jsp:useBean>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 
 <script>
-	//아침
+	var set = 1;
+	var SetTime = 30;      // 최초 설정 시간(기본 : 초)
+
+	
 	function Morning(){
 		e = document.getElementById("messageTextArea");
-		e.style.color="black";
-		e.style.background="white";
+		e.style.color="red";
+		e.style.background="blue";
 
 	}
-	//밤
-	function Night(){
-		e = document.getElementById("messageTextArea");
-		e.style.color="red";
-		e.style.background="black";
-	}
-	//직업 정해주기
-	function job(){
-		// 랜덤으로 접속자중 한명에게 코드 1을 부여한다 나머지 0
-		//alert("당신의 직업은 ' ' 입니다.'");
-	}
-	//투표
-	function vote(){
-	}
-	//마피아 timer중 밤에 실행
-	function kill(){
-		//코드 1을 가진 접속자가 누른 한명을 채팅불가상태로 바꾼다 
-	}
-	//조건을 만족하면 0 리턴
-	function gameend(){
-		//마피아가 죽거나 마피아랑 시민이 1:1이면 마퍄승
-		
-		//아니면 return 1
-		return 1;
+	function doRefresh() { 
+		parent.FRAME.location.href='userframe.jsp'; 
+		setTimeout("doRefresh()",500); //5초 
 	}
 	
-</script>
-
-
- <script language="JavaScript">
-      var mafiacord = 0;
-      var set = 1;
-      var SetTime = 3;      // 최초 설정 시간(기본 : 초)
-
-		System.out.println(mafiacord);
-      
-      function msg_time() {   // 1초씩 카운트
+	 function msg_time() {   // 1초씩 카운트
+		 
          m = Math.floor(SetTime / 60) + "분 " + (SetTime % 60) + "초";
          var msg = "현재 남은 시간은 <font color='red'>" + m + "</font> 입니다.";
          document.all.ViewTimer.innerHTML = msg;      // div 영역에 보여줌 
@@ -62,67 +34,57 @@
          if (SetTime < 0) {         // 시간이 종료 되었으면..        
             //clearInterval(tid);      // 타이머 해제
          if (set == 1){  
-        	//alert("투표를 해주세요");
-        	SetTime = 4;
-        	vote();
-        	set = 2;
-        	gameend();
+           //alert("투표를 해주세요");
+           SetTime = 3;
+           vote();
+           set = 2;
+           gameend();
          }
-         else if (set == 2)	{
-        	 //alert("밤이되었습니다.");
+         else if (set == 2)   {
+            //alert("밤이되었습니다.");
              SetTime = 3;
              Night();
              set = 3;
              gameend();
+             //kill (한번만 가능하게 할것)(마피아만 가능하게 할 것)
+             $(document).ready(function () {
+                 $("h1").click(function () {
+                     $(this).hide();
+                     alert("죽였습니다.");
+                 });
+             });
          }
          else if (set == 3) {
-        	 SetTime = 3;
-        	 //alert("낮이되었습니다.");
-        	 Morning();
-        	 set = 1;
-         }   
-         }}
-      window.onload = function TimerStart(){ tid=setInterval('msg_time()',1000) };
-     
-   </script>
+            SetTime = 3;
+            //alert("낮이되었습니다.");
+            Morning();
+            set = 1;
+         }
+         
+         }
+        
+	 }
+	// function TimerStart(){ tid=setInterval('msg_time()',1000) };
 
-
+	
+</script>
 </head>
 <body>
-	<%
-		ArrayList<String> str = user.getUserList();
-		int usersize = str.size();
-		
-	%>
-	<!-- 배열test 
-
-		ArrayList<String> mafialist_1 = new ArrayList<String>();
-		int [][] array = {{1}, {1, 2}, {1, 2, 3}, {1, 2, 3, 4}};
-		String [][] jobs = new String[4][2];
-		jobs[0][0]="wswsws";
-		jobs[0][1]="agrgfg";
-		System.out.println(jobs[0][1]);
-		for(int i = 0 ; i < array.length; i++) {
-            System.out.print( (i+1) + "번째 줄을 출력합니다>");
-            for(int j = 0; j< array[i].length; j++) {
-                System.out.print(array[i][j]+" ");
-            }
-            System.out.println("");
-        }
-    -->
-	
 
 	<!-- 메시지 표시 영역 -->
-	<textarea id="messageTextArea" readonly="readonly" rows="25" cols="45"></textarea>
+	<textarea id="messageTextArea" readonly="readonly" rows="25" cols="45" style="overflow-y: auto;"></textarea>
 	<br />
 	<!-- 송신 메시지 텍스트박스 -->
 	<input type="text" id="messageText" size="50" />
 	<!-- 송신 버튼 -->
 	<input type="button" value="Send" onclick="sendMessage()" />
-	<hr>
-	<!-- 유저창 -->
-	<iframe src = "userframe.jsp" width = "300" height = "200"></iframe>
+	<h1>
 	
+	</h1>
+	<input type="button" value="Change" onclick="Morning()"/>
+	<a href="userframe.jsp">
+	<input type="button" value="유저리스트 출력 확인"/>
+	</a>
 	<script type="text/javascript">
 		//웹소켓 초기화
 		var webSocket = new WebSocket("ws://localhost:8080/WebSocketEx/broadsocket");
@@ -132,7 +94,12 @@
 			//Json 풀기
 			var jsonData = JSON.parse(message.data);
 			if (jsonData.message != null) {
-				messageTextArea.value += jsonData.message + "\n";
+				if(jsonData.message == '공지 :  : 게임이 시작되었습니다'){
+					//alert("유레카");
+					msg_time();
+					//TimeStart();
+				}
+				messageTextArea.value += jsonData.message + "\n"
 			}
 		}
 		//메시지 보내기
@@ -144,36 +111,9 @@
 		
 		
 	</script>
-	<hr>
-	<!-- 
-	<script language="javascript"> 
-		function doRefresh() { 
-			parent.FRAME.location.href='userframe.jsp'; 
-			setTimeout("doRefresh()",1000); //5초 
-		}
-		
-		doRefresh(); 
-	</script> 
-	 -->
-	 <!-- 인원수가 3이상이면 start -->
-	 <%
-	 for(String ob : str){
-		 System.out.println(ob);
-	 }
-	 %>
-	 <%
-	 if (usersize >= 4){
+	<br><hr>
+	<iframe width="600" height="300" src="userframe.jsp" name="FRAME" ></iframe>
+	<div id=ViewTimer></div>
 
-	 %>
-	 <script>
-	 
-	 alert("게임시작");
-	
-	 
-	 </script>
-	 <!--<input type="button" name = "start" value="start" >-->
-	 <div id="ViewTimer"></div>
-	 <%} %>
-	 
 </body>
 </html>
