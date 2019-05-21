@@ -11,9 +11,10 @@
 <title>Insert title here</title>
 
 <script>
+	var day=1; //0이면 밤 1이면 낮
 	var set = 1;
 	var SetTime = 10; // 최초 설정 시간(기본 : 초)
-
+	
 	function Morning() {
 		e = document.getElementById("messageTextArea");
 		e.style.color = "red";
@@ -32,16 +33,32 @@
 		document.all.ViewTimer.innerHTML = msg; // div 영역에 보여줌 
 		SetTime--; // 1초씩 감소
 		if (SetTime < 0) { // 시간이 종료 되었으면..    
-			alert("시발");
+			//alert("시발");
 		//clearInterval(tid);      // 타이머 해제
+			changeBack();
 			SetTime=10;
 
 		}
 		//setInterval('msg_time()',1000);
 	}
 	
-	if(SetTime==0)
-		alert("시발");
+	function changeBack(){
+		var back=document.getElementById("messageTextArea");
+		if(day==1){
+			back.style.background = "black";
+			back.style.color="red";
+			day=0;
+			messageTextArea.value += "밤이 되었습니다.\n";
+		}
+		else{
+			back.style.background = "white";
+			back.style.color="black";
+			day=1;
+			messageTextArea.value += "낮이 되었습니다.\n";
+		}
+	}
+	
+	
 	// function TimerStart(){ tid=setInterval('msg_time()',1000) };
 </script>
 </head>
@@ -74,7 +91,7 @@
 					setInterval('msg_time()',1000);
 					//TimeStart();
 				}
-				messageTextArea.value += jsonData.message + "\n"
+				messageTextArea.value += jsonData.message + "\n";
 			}
 		}
 		//메시지 보내기
